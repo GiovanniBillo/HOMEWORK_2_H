@@ -210,6 +210,7 @@ Refer to the previous two exercises. Consider the selling prices (in thousands o
 
 (d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices? 
 
+
 ```{r}
 url_houses = "https://stat4ds.rwth-aachen.de/data/Houses.dat"
 
@@ -356,8 +357,60 @@ Consider $n$ independent observations from an exponential pdf $f(y;\lambda) = \l
 (b) Find the maximum likelihood estimator of $\lambda$ and of $E(Y)$. $\\$
 (c) One can show that $2 \lambda (\sum_i{Y_i})$ has a chi-squared distribution with $df = 2n$. Explain why
 $2 \lambda (\sum_i{Y_i})$ is a pivotal quantity, and use it to derive a 95% confidence interval for $\lambda$.
+a)
+\[
+f(y; \lambda) = \lambda e^{-\lambda y} 
+\]
+as the pdf of an exponential distribution, with  $ y \ge 0$ and $E[Y] = \frac{1}{\lambda}$ 
+\[
+L(\theta = \lambda; y) = \prod_{i = 1}^n \lambda e^{-\lambda \sum_{i = 1}^n y_{i}} 
+\]
 
+\[
+L(\theta = \lambda; y) =  \lambda^n e^{-\lambda n \sum y_{i}} 
+\]
+\[
+L(\theta = \lambda; y) =  h(\lambda) g(e^{-\lambda n \sum y_{i}} ) 
+\]
+with $\sum_{i = 1}^n y_i$ being our the statistic. 
 
+b) 
+\[
+ln(L) = ln(\lambda^n) ln(e^{-\lambda n \sum y_{i}}) 
+\]
+\[
+ln(L) = nln(\lambda) - \lambda n \sum_{i =1 }^ n y_i
+\]
+\[
+ln(L) = nln(\lambda) - \lambda n \sum_{i =1 }^ n y_i
+\]
+$$
+\frac{\partial ln(L)}{\partial \lambda} =  \frac{n}{\lambda} - n \sum y_i = 0
+$$
+$$
+ \frac{n}{\lambda} - n \sum y_i = 0
+$$
+$$
+\hat {\lambda} = \frac{1}{\sum y_i}
+$$
+which is the maximum likelihood estimator for lambda
+As $E[Y] = \frac{1}{\lambda}$, it follows that
+$$
+ \hat E[Y] = \sum y_i 
+$$
+c)
+By definition, a pivotal quantity is a RV that has a probability distribution that does not depend on any unknown parameters. If we know that the quantity $2 \lambda (\sum_i{Y_i})$ is $\chi_{2n}^2$  distributed, this quantity satisfies the definition of pivotal quantity.
+$$
+Q =  2 \lambda (\sum_i{Y_i})
+$$
+
+We can therefore write
+$$
+P(\chi_{2n, \frac{\alpha}{2}}^2 < 2 \lambda (\sum{Y_i}) < \chi_{2n, 1 - \frac{\alpha}{2}}^2 )
+$$
+$$
+\lambda \in [\frac{\chi_{2n, \frac{\alpha}{2}}^2}{2 \sum y_i}; \frac{\chi_{2n, 1 - \frac{\alpha}{2}}^2}{2 \sum y_i} ]
+$$
 ## FSDS - Chapter 5
 
 ### Ex 5.68
