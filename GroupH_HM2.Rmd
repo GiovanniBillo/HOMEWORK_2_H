@@ -10,14 +10,16 @@ date: "2024-12-04"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 ## FSDS - Chapter 4
 
 ### Ex 4.2
 
-For a sequence of observations of a binary random variable, you observe the geometric random variable (Section 2.2.2) outcome of the first success on observation number $y$ = 3. Find and plot the likelihood function.
+*For a sequence of observations of a binary random variable, you observe the geometric random variable (Section 2.2.2) outcome of the first success on observation number $y$ = 3. Find and plot the likelihood function.*
+
+**Solution**
 
 The probability mass function (PMF) of the **Geometric Distribution** is given by:
 
@@ -59,7 +61,9 @@ The graph shows that with Y = 3, meaning that it was necessary to have 3 trials 
 
 ### Ex 4.4
 
-For the Students data file and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret. 
+*For the Students data file and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret.*
+
+**Solution**
 
 (4.8) $$ \hat \pi = z_{\alpha/2} \sqrt{\frac{\hat \pi (1-\hat \pi)}{n}} $$
 
@@ -88,10 +92,12 @@ The interval is extremely small and includes 0: most probably the portion of stu
 
 ### Ex 4.38
 
-For independent observations $y_1, . . . , y_n$ having the geometric distribution (2.1): 
+*For independent observations $y_1, . . . , y_n$ having the geometric distribution (2.1):* 
 
-(a) Find a sufficient statistic for $\pi$. 
-(b) Derive the ML estimator of $\pi$.
+*(a) Find a sufficient statistic for $\pi$.* 
+*(b) Derive the ML estimator of $\pi$.*
+
+**Solution**
 
 a) 
 \[
@@ -201,15 +207,16 @@ where \( \sum_{i=1}^n x_i \) includes the original observed data values.
 
 ### Ex 4.44
 
-Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the Houses data file mentioned in Exercise 4.31. 
-(a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution. 
+*Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the Houses data file mentioned in Exercise 4.31.* 
+*(a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution.* 
 
-(b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters. 
+*(b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters.* 
 
-(c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions. 
+*(c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions.* 
 
-(d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices? 
+*(d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?*
 
+**Solution**
 
 ```{r}
 url_houses = "https://stat4ds.rwth-aachen.de/data/Houses.dat"
@@ -218,7 +225,7 @@ houses <- read.table(url_houses, header = TRUE)
 
 head(houses)
 ```
-#a
+(a)
 It known that the ML estimate of $\mu$ for the Normal distribution is:
 
 ```{r}
@@ -351,12 +358,15 @@ The log-normal distribution seems to be able to capture skewed tails and outlier
 
 ### Ex 4.54
 
-Consider $n$ independent observations from an exponential pdf $f(y;\lambda) = \lambda e^{− \lambda y}$ for $y$ $\ge$ 0, with parameter $\lambda$ > 0 for which $E(Y) = \frac{1}{\lambda}$. $\\$
+*Consider $n$ independent observations from an exponential pdf $f(y;\lambda) = \lambda e^{− \lambda y}$ for $y$ $\ge$ 0, with parameter $\lambda$ > 0 for which $E(Y) = \frac{1}{\lambda}$.* $\\$
 
-(a) Find the sufficient statistic for estimating $\lambda$. $\\$
-(b) Find the maximum likelihood estimator of $\lambda$ and of $E(Y)$. $\\$
-(c) One can show that $2 \lambda (\sum_i{Y_i})$ has a chi-squared distribution with $df = 2n$. Explain why
-$2 \lambda (\sum_i{Y_i})$ is a pivotal quantity, and use it to derive a 95% confidence interval for $\lambda$.
+*(a) Find the sufficient statistic for estimating $\lambda$*. $\\$
+*(b) Find the maximum likelihood estimator of $\lambda$ and of $E(Y)$. $\\$*
+*(c) One can show that $2 \lambda (\sum_i{Y_i})$ has a chi-squared distribution with $df = 2n$. Explain why*
+*$2 \lambda (\sum_i{Y_i})$ is a pivotal quantity, and use it to derive a 95% confidence interval for $\lambda$.*
+
+**Solution**
+
 a)
 \[
 f(y; \lambda) = \lambda e^{-\lambda y} 
@@ -415,14 +425,17 @@ $$
 
 ### Ex 5.68
 
-Explain why the confidence interval based on the Wald test of $H_0: \theta = \theta_0$ is symmetric around $\hat \theta$ (i.e., having center exactly equal to $\hat \theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat \theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.
+*Explain why the confidence interval based on the Wald test of $H_0: \theta = \theta_0$ is symmetric around $\hat \theta$ (i.e., having center exactly equal to $\hat \theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat \theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.*
 
+**Solution**
 
 ## FSDS - Chapter 6
 
 ### Ex 6.12
 
-For the UN data file at the book’s website (see Exercise 1.24), construct a multiple regression model predicting Internet using all the other variables. Use the concept of multicollinearity to explain why adjusted $R^2$ is not dramatically greater than when GDP is the sole predictor. Compare the estimated GDP effect in the bivariate model and the multiple regression model and explain why it is so much weaker in the multiple regression model.
+*For the UN data file at the book’s website (see Exercise 1.24), construct a multiple regression model predicting Internet using all the other variables. Use the concept of multicollinearity to explain why adjusted $R^2$ is not dramatically greater than when GDP is the sole predictor. Compare the estimated GDP effect in the bivariate model and the multiple regression model and explain why it is so much weaker in the multiple regression model.*
+
+**Solution**
 
 ```{r}
 UN_url <- "https://stat4ds.rwth-aachen.de/data/UN.dat"
@@ -480,12 +493,14 @@ In fact, both ANOVA and AIC tests confirm that they are indeed significantly dif
 
 ### Ex 6.14
 
-The data set Crabs2 at the book’s website comes from a study of factors that affect sperm traits of male horseshoe crabs. A response variable, $SpermTotal$, is the log of the total number of sperm in an ejaculate. It has $\bar y$ = 19.3 and $s$ = 2.0. The two explanatory variables used in the R output are the horseshoe crab’s $carapace width$ (CW, mean 18.6 $cm$, standard deviation 3.0 $cm$), which is a measure of its size, and $color$ (1 = dark, 2 = medium, 3 = light), which is a measure of adult age, darker ones being older.
+*The data set Crabs2 at the book’s website comes from a study of factors that affect sperm traits of male horseshoe crabs. A response variable, $SpermTotal$, is the log of the total number of sperm in an ejaculate. It has $\bar y$ = 19.3 and $s$ = 2.0. The two explanatory variables used in the R output are the horseshoe crab’s $carapace width$ (CW, mean 18.6 $cm$, standard deviation 3.0 $cm$), which is a measure of its size, and $color$ (1 = dark, 2 = medium, 3 = light), which is a measure of adult age, darker ones being older.*
 
-(a) Using the results shown, write the prediction equation and interpret the parameter estimates.
-(b) Explain the differences in what is tested with the F statistic 
-  (i) for the overall model,   (ii) for the factor(Color) effect
-  (iii) for the interaction term. Interpret each
+*(a) Using the results shown, write the prediction equation and interpret the parameter estimates.*
+*(b) Explain the differences in what is tested with the F statistic*
+  *(i) for the overall model,   (ii) for the factor(Color) effect*
+  *(iii) for the interaction term. Interpret each*
+
+**Solution**
 
 (a)
 ```{r}
@@ -517,7 +532,9 @@ The ANOVA variance tests whether the different model specifications are differen
 
 ### Ex 6.30
 
-When the values of $y$ are multiplied by a constant $c$, from their formulas, show that $s_y$ and $\hat \beta_1$ in the bivariate linear model are also then multiplied by $c$. Thus, show that r = $\hat \beta_1(\frac{s_x}{s_y})$ does not depend on the units of measurement.
+*When the values of $y$ are multiplied by a constant $c$, from their formulas, show that $s_y$ and $\hat \beta_1$ in the bivariate linear model are also then multiplied by $c$. Thus, show that r = $\hat \beta_1(\frac{s_x}{s_y})$ does not depend on the units of measurement.*
+
+**Solution**
 
 Given the bivariate linear model $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_i$ and a constant $c$ s.t. $y^*_i = cy_i$, we have that 
 $$
@@ -539,9 +556,14 @@ Therefore we can conclude that $r$ does not depend on the units of measurement.
 
 ### Ex 6.42
 
-You can fit the quadratic equation E(Y) = $\beta_0 + \beta_1 x + \beta_2 x^2$ by fitting a multiple regression model with $x_1 = x$ and $x_2 = x^2$.
+*You can fit the quadratic equation E(Y) = $\beta_0 + \beta_1 x + \beta_2 x^2$ by fitting a multiple regression model with $x_1 = x$ and $x_2 = x^2$.*
 
-(a) Simulate 100 independent observations from the model $Y = 40.0−5.0x+0.5x^2 + \epsilon$, where X has a uniform distribution over [0, 10] and $\epsilon  ∼ N (0, 1)$. Plot the data and fit the quadratic model. Report how the fitted equation compares with the true relationship
+*(a) Simulate 100 independent observations from the model $Y = 40.0−5.0x+0.5x^2 + \epsilon$, where X has a uniform distribution over [0, 10] and $\epsilon  ∼ N (0, 1)$. Plot the data and fit the quadratic model. Report how the fitted equation compares with the true relationship*
+*(b) Find the correlation between x and y and explain why it is so weak even though the plot shows a strong relationship with a large $R^2$ value for the quadratic model.*
+
+**Solution**
+
+(a)
 
 ```{r}
 set.seed(42) # For reproducibility
@@ -568,7 +590,7 @@ ggp
 ```
 The regression line with the quadratic term fits the data very well even though it ignores the other terms. The quadratic term prevales as X grows, resulting in the model being an overall good fit even if some points are spread around the regression line and not exactly on it.
 
-(b) Find the correlation between x and y and explain why it is so weak even though the plot shows a strong relationship with a large $R^2$ value for the quadratic model.
+(b)
 
 ```{r}
 # Print the summary of the model
@@ -585,26 +607,29 @@ The correlation is so low despite X^2 being a very good fit for the model becaus
 
 ### Ex 6.52
 
-F statistics have alternate expressions in terms of $R^2$ values.
+*F statistics have alternate expressions in terms of $R^2$ values.*
 
-(a) Show that for testing $H_0 : \beta_1 = ... = \beta_p$ = 0, 
+*(a) Show that for testing $H_0 : \beta_1 = ... = \beta_p$ = 0,*
 $$ F = \frac{(TSS-SSE)/p}{SSE/[n-(p+1)]} $$ 
-is equivalent to:
+*is equivalent to:*
 
 $$ F = \frac{R^2/p}{(1-R^2)/[n-(p+1)]} $$ 
-Explain why larger values of $R^2$ yield larger values of $F$.
+*Explain why larger values of $R^2$ yield larger values of $F$.*
 
-(b) Show that for comparing nested linear models,
+*(b) Show that for comparing nested linear models,*
 
 $$ F = \frac{(SSE_0-SSE_1)/(p_1-p_0)}{SSE_1/[n-(p_1+1)]} \quad = \quad \frac{R_1^2-R_0^2/(p_1-p_0)}{(1-R_1^2)/[n-(p_1+1)]} $$
 
+**Solution**
 
 ## FSDS - Chapter 7
 
 ### Ex 7.4
 
-Analogously to the previous exercise, randomly sample 30 X observations from a uniform in
-the interval (-4,4) and conditional on X = $x$, 30 normal observations with E(Y ) = $3.5x^3$ − $20x^2$ + $0.5x$ + 20 and $\sigma$ = 30. Fit polynomial normal GLMs of lower and higher order than that of the true relationship. Which model would you suggest? Repeat the same task for E(Y ) = $0.5x^3$ − $20x^2$ + $0.5x$ + 20 (same $\sigma$) several times. What do you observe? Which model would you suggest now?
+*Analogously to the previous exercise, randomly sample 30 X observations from a uniform in
+the interval (-4,4) and conditional on X = $x$, 30 normal observations with E(Y ) = $3.5x^3$ − $20x^2$ + $0.5x$ + 20 and $\sigma$ = 30. Fit polynomial normal GLMs of lower and higher order than that of the true relationship. Which model would you suggest? Repeat the same task for E(Y ) = $0.5x^3$ − $20x^2$ + $0.5x$ + 20 (same $\sigma$) several times. What do you observe? Which model would you suggest now?*
+
+**Solution**
 
 ```{r}
 n = 30
@@ -705,9 +730,16 @@ Npow all models but the linear one fit the data almost perfectly
 
 ### Ex 7.20
 
-In the Crabs data file introduced in Section 7.4.2, the variable y indicates whether a female horseshoe crab has at least one satellite (1 = yes, 0 = no).
+*In the Crabs data file introduced in Section 7.4.2, the variable y indicates whether a female horseshoe crab has at least one satellite (1 = yes, 0 = no).*
 
-(a) Fit a main-effects ( no interaction terms) logistic model using weight and categorical color as explanatory variables. Conduct a significance test for the color effect, and construct a 95% confidence interval for the weight effect.
+*(a) Fit a main-effects ( no interaction terms) logistic model using weight and categorical color as explanatory variables. Conduct a significance test for the color effect, and construct a 95% confidence interval for the weight effect.*
+*(b) Fit the model that permits interaction between color as a factor and weight in their effects, showing the estimated effect of weight for each color. Test whether this model provides a significantly better fit.*
+*(c) Use AIC to determine which models seem most sensible among the models with (i) interaction, (ii) main effects, (iii) weight as the sole predictor, (iv) color as the sole predictor, and (v) the null model.*
+
+**Solution**
+
+(a)
+
 ```{r}
 crabs_url <- "https://stat4ds.rwth-aachen.de/data/Crabs.dat"
 
@@ -720,7 +752,8 @@ CI_weight = fit$coefficients[2] + c(-1,1)*qnorm(0.975)*(summary(fit)$coefficient
 confint(fit)
 # the intervals match!
 ```
-(b) Fit the model that permits interaction between color as a factor and weight in their effects, showing the estimated effect of weight for each color. Test whether this model provides a significantly better fit.
+(b) 
+
 ```{r}
 fit1 = glm(y ~ weight + factor(color) + weight:factor(color), family = binomial(link = "logit"), data = crabs)
 summary(fit1)
@@ -732,7 +765,8 @@ anova(fit1, fit, test = "LRT")
 The extended model scores a slightly lower deviance, but it doesn't significantly improve with the AIC. Also with LRT, the difference between the 2 models is not significant even at the 10% level. 
 We thus prefer the smaller and simpler model.
 
-(c) Use AIC to determine which models seem most sensible among the models with (i) interaction, (ii) main effects, (iii) weight as the sole predictor, (iv) color as the sole predictor, and (v) the null model.
+(c)
+
 ```{r}
 # Fit the models
 model_interaction <- glm(y ~ weight * color, family = binomial, data = crabs)
@@ -754,7 +788,9 @@ The ANOVA test also confirms that the main effects model is significantly better
 
 ### Ex 7.26
 
-A headline in The $Gainesville$ $Sun$ (Feb. 17, 2014) proclaimed a worrisome spike in shark attacks in the previous two years. The reported total number of shark attacks in Florida per year from 2001 to 2013 were 33, 29, 29, 12, 17, 21, 31, 28, 19, 14, 11, 26, 23. Are these counts consistent with a null Poisson model? Explain, and compare aspects of the Poisson model and negative binomial model fits.
+*A headline in The $Gainesville$ $Sun$ (Feb. 17, 2014) proclaimed a worrisome spike in shark attacks in the previous two years. The reported total number of shark attacks in Florida per year from 2001 to 2013 were 33, 29, 29, 12, 17, 21, 31, 28, 19, 14, 11, 26, 23. Are these counts consistent with a null Poisson model? Explain, and compare aspects of the Poisson model and negative binomial model fits.*
+
+**Solution**
 
 ```{r}
 counts = c(33, 29, 29, 12, 17, 21, 31, 28, 19, 14, 11, 26, 23)
