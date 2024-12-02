@@ -10,7 +10,7 @@ date: "2024-12-04"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = F)
 ```
 
 ## FSDS - Chapter 4
@@ -21,51 +21,50 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 
 **Solution**
 
-The probability mass function (PMF) of the **Geometric Distribution** is given by:
+The probability mass function (p.m.f) of the **Geometric Distribution** is given by:
 
-\[
-P(Y = y) = (1 - \pi)^{y - 1} \pi, \quad y_{i} = 1, 2, 3, \dots
-\]
-and with $Y = 3$
-\[
-f(3) = (1 - \pi )^{3 - 1}\pi = (1 - \pi )^{2}\pi
-\]
-\[
-l(\theta) = \prod_{i=1}^n f(y_i; \pi) = (1 - \pi )^{\sum_{i=1}^n (y_i - 1)}\pi
-\]
-In our case $\theta = \pi$
-\[
-l(\pi) = \pi(1 - \pi)^3
-\]
+
+$$ f_Y(y; p) = (1 - p)^{y - 1} p, \quad y  = 1, 2, 3, \dots , $$ 
+Substituting $y = 3$ in the formula we obtain:
+
+$$ f(3;p) = (1 - p)^{3 - 1}p  = (1- p)^{2}p $$ 
+Compute the likelihood function:
+
+ $$ L(\theta) = L(p)= \prod_{i=1}^n f(y_i; p) = \prod_{i=1}^n [(1-p)^{y_i-1}p] =(1 - p )^{\sum_{i=1}^n (y_i - 1)} p $$
+
+$$L(p) = p(1 - p)^2$$
+
+We can graphically represent the likelihood function:
 
 ```{r}
-y = 3
-
-my_llik <- function(y, pi){
-  exponent = sum((1:y) - 1)
-  return(pi*(1 - pi)^exponent)
+# Define the likelihood function for y = 3
+likelihood_function <- function(p) {
+  return((1 - p)^2 * p)
 }
 
-pi_vec = seq(from = 0.1, to = 1, by = 0.01)
-llik_vector = sapply(pi_vec, function(pi) my_llik(3, pi))
+# Generate a sequence of p values
+p_values <- seq(0, 1, length.out = 100)
 
-max_pi = print(pi_vec[which.max(llik_vector)])
+# Calculate the likelihood for each p value
+likelihood_values <- likelihood_function(p_values)
+max_pi <- p_values[which.max(likelihood_values)]
 
-plot(pi_vec, llik_vector, type = "l", col = "blue", lwd = 2, 
-     xlab = expression(pi), ylab = "Likelihood", 
-     main = "ML of a Geometric RV with Y = 3")
-
+# Plot the likelihood function
+plot(p_values, likelihood_values-max(likelihood_values), type = "l", col = "blue", 
+     main = "Likelihood Function for Geometric Distribution", 
+     xlab = "Probability of success (p)", ylab = "likelihood-max(likelihood)")
 
 ```
-The graph shows that with Y = 3, meaning that it was necessary to have 3 trials before a success, the most likely parameter to have generated this data is $\pi$ = `r max_pi `
+
+The graph shows that with $y = 3$, meaning that it was necessary to have 3 trials before a success, the most likely parameter to have generated this data is $p$ = `r max_pi `
 
 ### Ex 4.4
 
 *For the Students data file and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret.*
 
-**Solution**
-
 (4.8) $$ \hat \pi = z_{\alpha/2} \sqrt{\frac{\hat \pi (1-\hat \pi)}{n}} $$
+
+**Solution**
 
 ```{r}
 url <- "https://stat4ds.rwth-aachen.de/data/Students.dat"
@@ -74,6 +73,7 @@ students <- read.table(url, header = TRUE)
 
 head(students)
 ```
+
 ```{r}
 n = nrow(students)
 life_after_death = students$life["life" = 1]
@@ -82,13 +82,16 @@ waldInterval = function(x, n, conf.level = 0.95){
    p <- x/n
    sd <- sqrt(p*((1-p)/n))
    z <- qnorm(c( (1 - conf.level)/2, 1 - (1-conf.level)/2)) 
-   #returns the value of thresholds at which conf.level has to be cut at. for 95% CI, this is -1.96 and +1.96
+   #returns the value of thresholds at which conf.level has to be cut at. for 95% CI, 
+   #this is -1.96 and +1.96
    ci <- p + z*sd
    return(ci)
 }
 waldInterval(life_after_death, n)
 ```
 The interval is extremely small and includes 0: most probably the portion of students that believe in life after death is not significantly different from 0.
+
+
 
 ### Ex 4.38
 
@@ -99,111 +102,31 @@ The interval is extremely small and includes 0: most probably the portion of stu
 
 **Solution**
 
-a) 
-\[
-l(\theta = \pi | x) = \prod_{i=1}^n (1 - \pi )^(y_i - 1)} pi^n
-\]
-\[
-l(\theta = \pi | x) = (1 - \pi )^(y_i - 1)} pi^n
-\]
-and we can Identify $\pi^n$ as $h(\pi)$, and $ (1 - \pi)^{\sum (y_i - 1)}$ as g, with $\sum (y_i - 1)$ being the sufficient statistic
+a)
+
+The probability mass function (p.m.f) of the **Geometric Distribution** is given by:
+
+$$ f_Y(y; p) = (1 - p)^{y - 1} p, \quad y  = 1, 2, 3, \dots , $$ 
+For n independent observations $y_1, \dots , y_n$, the joint likelihood function is:
+
+ $$ L(p; y_1, \dots, y_n)= \prod_{i=1}^n P(Y_i = y_i) = \prod_{i=1}^n [(1-p)^{y_i-1}p] =(1 - p )^{\sum_{i=1}^n (y_i - 1)} p^n $$
+
+The sufficient statistic, derived from the formula is given by the exponential part ${\sum_{i=1}^n (y_i - 1)}$ . Thus, the likelihood depends on the data only through ${\sum_{i=1}^n y_i}$.
+
+In conclusion, by the Factorization Theorem, $s(y) = {\sum_{i=1}^n y_i}$ is a sufficient statistic for $p$.
 
 b)
-### Geometric Distribution PMF
 
-The probability mass function (PMF) of a geometric distribution is:
+In order to find ML for $p$ analytically, we need to compute the log-likelihood function:
 
-\[
-P(X = x) = (1 - p)^{x - 1} p, \quad x = 1, 2, 3, \dots
-\]
+$$ l(p) = log(L(p; y_1, \dots, y_n)) = \sum_i^n y_i\ log(1-p)+n \log(p)$$
+Now, we differentiate $l(p)$ with respect to $p$ and set it to 0:
 
-where:
-- \( p \) is the probability of success in a Bernoulli trial.
-- \( x \) is the number of trials needed to get the first success.
+$$ \frac{\partial \ l(p) }{\partial \ p} = \frac{\sum_i^n y_i}{1-p} - \frac{n}{p} = 0$$
+$$ p \sum_i^n y_i  = n(1-p) => p = \frac {n}{\sum_i^n y_i}$$
+In conclusion, The Maximum Likelihood Estimate (MLE) for $p$ is:
 
-### Likelihood Function
-
-Given \( n \) independent observations \( x_1, x_2, \dots, x_n \), the likelihood function is the joint probability of the observed data:
-
-\[
-L(p) = \prod_{i=1}^n P(X = x_i) = \prod_{i=1}^n \big[(1 - p)^{x_i - 1} p\big]
-\]
-
-Simplify:
-
-\[
-L(p) = p^n \prod_{i=1}^n (1 - p)^{x_i - 1}
-\]
-
-Using the product rule for exponents:
-
-\[
-L(p) = p^n (1 - p)^{\sum_{i=1}^n (x_i - 1)}
-\]
-
-### Log-Likelihood Function
-
-Take the natural logarithm of the likelihood function to simplify computation:
-
-\[
-\ell(p) = \log L(p) = \log\big[p^n (1 - p)^{\sum_{i=1}^n (x_i - 1)}\big]
-\]
-
-Using the logarithm properties (\(\log(ab) = \log a + \log b\) and \(\log(a^b) = b \log a\)):
-
-\[
-\ell(p) = n \log p + \bigg(\sum_{i=1}^n (x_i - 1)\bigg) \log(1 - p)
-\]
-
-### First Derivative
-
-To find the MLE, take the derivative of \(\ell(p)\) with respect to \(p\) and set it equal to 0:
-
-\[
-\frac{d\ell(p)}{dp} = \frac{n}{p} - \frac{\sum_{i=1}^n (x_i - 1)}{1 - p} = 0
-\]
-
-Rearrange terms:
-
-\[
-\frac{n}{p} = \frac{\sum_{i=1}^n (x_i - 1)}{1 - p}
-\]
-
-Simplify:
-
-\[
-n (1 - p) = p \sum_{i=1}^n (x_i - 1)
-\]
-
-\[
-n - np = p \sum_{i=1}^n (x_i - 1)
-\]
-
-\[
-n = np + p \sum_{i=1}^n (x_i - 1)
-\]
-
-Factor out \(p\):
-
-\[
-n = p \bigg(n + \sum_{i=1}^n (x_i - 1)\bigg)
-\]
-
-Solve for \(p\):
-
-\[
-p = \frac{n}{n + \sum_{i=1}^n (x_i - 1)}
-\]
-
-### Conclusion
-
-The Maximum Likelihood Estimate (MLE) for \(p\) is:
-
-\[
-\hat{p} = \frac{n}{\sum_{i=1}^n x_i}
-\]
-
-where \( \sum_{i=1}^n x_i \) includes the original observed data values.
+$$ \hat{p} = \frac{n}{\sum_{i=1}^n y_i} $$
 
 ### Ex 4.44
 
@@ -225,8 +148,7 @@ houses <- read.table(url_houses, header = TRUE)
 
 head(houses)
 ```
-(a)
-It known that the ML estimate of $\mu$ for the Normal distribution is:
+a)
 
 ```{r}
 likelihood_normal <- function(mu, sigma2, data) {
@@ -266,6 +188,8 @@ comparison <- data.frame(
 
 comparison
 ```
+b)
+
 ```{r}
 
 log_likelihood_normal <- function(mu, sigma2, data) {
@@ -298,13 +222,13 @@ Log_ML_mu = optim(
   lower = 1e-6  # Ensure sigma^2 > 0
 )
 
-comparison <- data.frame(
+comparison2 <- data.frame(
   Quantity = c("Mean", "Variance"),
   MLE_Function = c(Log_ML_mu$par, Log_ML_sigma$par),
   Built_in_Function = c(mu_hat, s2_hat)
 )
 
-comparison
+comparison2
 ```
 ```{r}
 # Load required libraries
@@ -354,8 +278,6 @@ ggplot(data = data.frame(price = data), aes(x = price)) +
 
 ```
 
-The log-normal distribution seems to be able to capture skewed tails and outliers much better than the standard normal distribution.
-
 ### Ex 4.54
 
 *Consider $n$ independent observations from an exponential pdf $f(y;\lambda) = \lambda e^{− \lambda y}$ for $y$ $\ge$ 0, with parameter $\lambda$ > 0 for which $E(Y) = \frac{1}{\lambda}$.* $\\$
@@ -368,59 +290,73 @@ The log-normal distribution seems to be able to capture skewed tails and outlier
 **Solution**
 
 a)
-\[
-f(y; \lambda) = \lambda e^{-\lambda y} 
-\]
-as the pdf of an exponential distribution, with  $ y \ge 0$ and $E[Y] = \frac{1}{\lambda}$ 
-\[
-L(\theta = \lambda; y) = \prod_{i = 1}^n \lambda e^{-\lambda \sum_{i = 1}^n y_{i}} 
-\]
 
-\[
-L(\theta = \lambda; y) =  \lambda^n e^{-\lambda n \sum y_{i}} 
-\]
-\[
-L(\theta = \lambda; y) =  h(\lambda) g(e^{-\lambda n \sum y_{i}} ) 
-\]
-with $\sum_{i = 1}^n y_i$ being our the statistic. 
+To find the sufficient statistic for $\lambda$, we use the factorization theorem which states that a statistic T(y) is sufficient for a parameter $\lambda$ if the joint p.d.f. can be factored in two parts: one part depends on the data y only through T(y) and $\lambda$ and the other depends on the data y but not on $\lambda$.
 
-b) 
-\[
-ln(L) = ln(\lambda^n) ln(e^{-\lambda n \sum y_{i}}) 
-\]
-\[
-ln(L) = nln(\lambda) - \lambda n \sum_{i =1 }^ n y_i
-\]
-\[
-ln(L) = nln(\lambda) - \lambda n \sum_{i =1 }^ n y_i
-\]
-$$
-\frac{\partial ln(L)}{\partial \lambda} =  \frac{n}{\lambda} - n \sum y_i = 0
-$$
-$$
- \frac{n}{\lambda} - n \sum y_i = 0
-$$
-$$
-\hat {\lambda} = \frac{1}{\sum y_i}
-$$
-which is the maximum likelihood estimator for lambda
+The exponential p.d.f is:
+
+$$ f(y; \lambda) = \lambda e^{-\lambda y}, \quad y \ge 0 $$
+with $E[Y] = \frac{1}{\lambda}$ 
+
+For $n$ independent observations $y_1, y_2, \dots, y_n$ the joint p.d.f is:
+
+$$ f(y_1, y_2, \dots, y_n; \lambda) = \prod_{i = 1}^n \lambda e^{-\lambda \ y_i} $$
+$$ f(y_1, y_2, \dots, y_n; \lambda) =  \lambda^n e^{-\lambda \sum_{i = 1}^n y_{i}} $$
+Now we can identify the sufficient statistic:
+
+$$ g(T(y), \lambda) \ h(y) $$
+We can identify from the previous formula:
+
+$T(y) = \sum_{i = 1}^n y_{i}$, $g(T(y), \lambda) = \lambda^n e^{-\lambda \sum_{i = 1}^n y_{i}}$ and $h(y) = 1$.
+
+Thus, the sufficient statistic for $\lambda$ is $\sum_{i = 1}^n y_i$.
+
+b)
+
+The log-likelihood function is:
+
+$$ l(\lambda) = log(L(\lambda)) = log(f(y;\lambda)) = n \ log \ \lambda \ - \lambda \sum_{i = 1}^n y_i $$
+To find the MLE of $\lambda$ we have to differentiate $l(\lambda)$ w.r.t $\lambda$ and set it equal to 0.
+
+$$ \frac{\partial \ l(\lambda) }{\partial \ \lambda} = \frac{n}{y} - \sum_{i = 1}^n y_i = 0$$
+Solving for $\lambda$ we obtain $\hat \lambda = \frac{n}{\sum_{i = 1}^n y_i}$. This is our MLE.
+
+
 As $E[Y] = \frac{1}{\lambda}$, it follows that
 $$
- \hat E[Y] = \sum y_i 
+ \hat E[Y] = \frac{1}{\hat \lambda} =  \frac{\sum_{i = 1}^n y_i}{n}
 $$
+Which corresponds to the sample mean.
+
 c)
-By definition, a pivotal quantity is a RV that has a probability distribution that does not depend on any unknown parameters. If we know that the quantity $2 \lambda (\sum_i{Y_i})$ is $\chi_{2n}^2$  distributed, this quantity satisfies the definition of pivotal quantity.
+
+A pivotal quantity is a function of the sample data and the parameter of interest that has a known probability distribution, independent of the parameter's actual value. In this case:
+
 $$
 Q =  2 \lambda (\sum_i{Y_i})
 $$
+It is pivotal because it is a function of the sample data $\sum_i{Y_i}$ and the parameter $\lambda$. Its distribution does not depend on $\lambda$ and it follows a chi-squared distribution with 2 degrees of freedom.
+
+$$ Q \sim X_{2n}^2 $$
+This independence from $\lambda$ makes Q a pivotal quantity. 
+
+To find the C.I. we set this equality:
+
+$$ P (q_{\alpha/2} \le Q \le q_{1-\alpha/2} ) = 1 - \alpha$$
+From the definition of Q:
+
+$$ P (q_{\alpha/2} \le 2 \lambda \sum_i{Y_i} \le q_{1-\alpha/2} ) = 1 - \alpha$$
 
 We can therefore write
 $$
-P(\chi_{2n, \frac{\alpha}{2}}^2 < 2 \lambda (\sum{Y_i}) < \chi_{2n, 1 - \frac{\alpha}{2}}^2 )
+P(\chi_{2n, \frac{\alpha}{2}}^2 < 2 \lambda \sum{Y_i} < \chi_{2n, 1 - \frac{\alpha}{2}}^2 )
 $$
+In conclusion, with some simple algebra, the 95% C.I. for $\lambda$ is:
+
 $$
 \lambda \in [\frac{\chi_{2n, \frac{\alpha}{2}}^2}{2 \sum y_i}; \frac{\chi_{2n, 1 - \frac{\alpha}{2}}^2}{2 \sum y_i} ]
 $$
+
 ## FSDS - Chapter 5
 
 ### Ex 5.68
@@ -428,6 +364,17 @@ $$
 *Explain why the confidence interval based on the Wald test of $H_0: \theta = \theta_0$ is symmetric around $\hat \theta$ (i.e., having center exactly equal to $\hat \theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat \theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.*
 
 **Solution**
+
+The Wald Confidence Interval is symmetric around $\hat \theta$ because it is build from the normal approximation:
+
+$$ C.I. = \hat \theta \pm z_{\alpha/2}SE(\hat \theta) $$
+The symmetry is supported from the assumption that the sampling distribution of $\hat \theta$ is approximately normal and centered in $\hat \theta$.
+
+On the other hand, confidence intervals based on the likelihood-ratio test and score test are not necessarily symmetric. These methods are derived from the curvature of the likelihood function or deviations under the null hypothesis, which may lead to asymmetric intervals that depends on the properties of the data.
+
+The symmetry of Wald type intervals becomes problematic when $\hat \theta$ is near a boundary (i.e. a proportion close to 0 or 1). If we imagine that the result of a C.I. sets the lower bound below 0, that would make no sense since a proportion cannot be negative. Another problem could arise when the upper bound is greater than 1, because the proportions are included in $[0,1]$.
+
+These issues arise because the Wald C.I. does not account for the constraints of the parameter space. 
 
 ## FSDS - Chapter 6
 
@@ -491,6 +438,7 @@ anova(fit, fit_gdp, test = "Chisq")
 ```
 In fact, both ANOVA and AIC tests confirm that they are indeed significantly different in their prediction quality, with the simpler model performing worse.
 
+
 ### Ex 6.14
 
 *The data set Crabs2 at the book’s website comes from a study of factors that affect sperm traits of male horseshoe crabs. A response variable, $SpermTotal$, is the log of the total number of sperm in an ejaculate. It has $\bar y$ = 19.3 and $s$ = 2.0. The two explanatory variables used in the R output are the horseshoe crab’s $carapace width$ (CW, mean 18.6 $cm$, standard deviation 3.0 $cm$), which is a measure of its size, and $color$ (1 = dark, 2 = medium, 3 = light), which is a measure of adult age, darker ones being older.*
@@ -502,32 +450,40 @@ In fact, both ANOVA and AIC tests confirm that they are indeed significantly dif
 
 **Solution**
 
-(a)
 ```{r}
 crabs2_url <- "https://stat4ds.rwth-aachen.de/data/Crabs2.dat"
 
 crabs2 = read.table(crabs2_url, header = TRUE)
+head(crabs2)
 crabs2$Color = as.factor(crabs2$Color)
+```
+a)
 
+```{r}
 fit_crab = lm(SpermTotal ~ CW + Color, data = crabs2)
 summary(fit_crab)
 ```
-Prediction equation:
-$$
-SpermTotal =11.3589620+0.3911538×CW+0.8081103×Color2+1.1487937×Color3
-$$
-Interpretation of the estimates:
-  - 1 extra centimeter of carapace width contributes to approximately $ (1 - e^{0.3911538}) 100 \% $ to sperm production.
-  - A crab of having color 2 contributes $ (1 - e^{0.8081103}) 100 \% $ to sperm production
-  - A crab of having color 3 contributes $ (1 - e^{1.1487937}) 100 \% $ to sperm production
+
+**Prediction Equation:**
+
+$$ SpermTotal =11.3589620+0.3911538×CW+0.8081103×Color2+1.1487937×Color3 $$
+**Interpretation of the estimates:**
+
+  - 1 extra centimeter of carapace width contributes to approximately $(1 - e^{0.3911538}) 100 \%$ to sperm production.
+  - A crab having color 2 contributes $(1 - e^{0.8081103}) 100 \%$ to sperm production
+  - A crab having color 3 contributes $(1 - e^{1.1487937}) 100 \%$ to sperm production
+  
+b) 
+
+The F-statistic in an analysis of variance (ANOVA) or regression context is used to test different hypotheses depending on what aspect of the model is being examined. 
+
 ```{r}
 anova(lm(SpermTotal ~ CW + factor(Color) + CW:factor(Color), data=crabs2))
 ```
+(i) the test on the overall model checks whether it is significantly different from the Null model; more specifically if **at least one** predictor is significantly different from 0 ( this is the case, as both CW and colour(s) are statistically significant).
 
-(b)
-The ANOVA variance tests whether the different model specifications are different from each other. 
-(i) the test on the overall model checks whether it is significantly different from the Null model; more specifically if ** at least one ** predictor is significantly different from 0 ( this is the case, as both CW and colour(s) are statistically significant).
 (ii) Regarding the color effect, it checks whether there is a significant difference between different color groups.
+
 (iii) Regarding the interaction effect, it tests whether there is a significant difference between color groups when taking into account the combined effect of Carapace weight and Color. In this case, the P value is > 0.2 so we can't reject H0 (there is no interaction effect).
 
 ### Ex 6.30
@@ -536,21 +492,22 @@ The ANOVA variance tests whether the different model specifications are differen
 
 **Solution**
 
-Given the bivariate linear model $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_i$ and a constant $c$ s.t. $y^*_i = cy_i$, we have that 
-$$
-s_{y^*} = \sum_{i=1}^n (y_i^*-\bar{y}^*) = \sum_{i=1}^n (cy_i-c\bar{y}) = c\sum_{i=1}^n (y_i-\bar{y}) = cs_y
-$$
-and 
+Given the bivariate linear model $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_i$ and a constant $c$ s.t. $y^*_i = cy_i$, we have that: 
+
+$$s_{y^*} = \sum_{i=1}^n (y_i^*-\bar{y}^*) = \sum_{i=1}^n (cy_i-c\bar{y}) = c\sum_{i=1}^n (y_i-\bar{y}) = cs_y $$
+and:
+
 $$
 \hat{\beta}_1^* = \frac{s_{xy^*}}{s_x^2} =  \frac{\sum_{i=1}^n (y_i^*-\bar{y}^*)(x_i-\bar{x})}{\sum_{i=1}^n (x_i-\bar{x})^2} = \frac{\sum_{i=1}^n c(y_i-\bar{y})(x_i-\bar{x})}{\sum_{i=1}^n (x_i-\bar{x})^2} = c\hat{\beta}_1
 $$ 
 Finally, given $u_1$ and $u_2$ constants that represent different units of measurement respectively for $x$ and $y$, s.t. 
-$x^* = u_1x; \quad  y^* = u_2y$  
+$x^* = u_1x; \quad  y^* = u_2y$
+
 $$
 r^* = \hat{\beta}_1^*(s_{x^*}/s_{y^*}) = \frac{s_{x^*y^*}{s_{x^*}}}{s_{x^*}^2s_{y^*}} =  \frac{\sum_{i=1}^n (y_i^*-\bar{y}^*)(x_i^*-\bar{x}^*)\sum_{i=1}^n(x_i^*-\bar{x}^*)}{\sum_{i=1}^n (x_i^*-\bar{x}^*)^2\sum_{i=1}^n (y_i^*-\bar{y}^*)} = 
 $$
 $$
-\frac{\sum_{i=1}^n u_1u_2(y_i-\bar{y})(x_i-\bar{x})\sum_{i=1}^nu_1(x_i-\bar{x})}{\sum_{i=1}^n u_1^2(x_i-\bar{x})^2\sum_{i=1}^n u_2(y_i-\bar{y})} = \hat{\beta}_1(s_x/s_y) = r
+= \frac{\sum_{i=1}^n u_1u_2(y_i-\bar{y})(x_i-\bar{x})\sum_{i=1}^nu_1(x_i-\bar{x})}{\sum_{i=1}^n u_1^2(x_i-\bar{x})^2\sum_{i=1}^n u_2(y_i-\bar{y})} = \hat{\beta}_1(s_x/s_y) = r
 $$
 Therefore we can conclude that $r$ does not depend on the units of measurement.
 
@@ -563,7 +520,7 @@ Therefore we can conclude that $r$ does not depend on the units of measurement.
 
 **Solution**
 
-(a)
+a)
 
 ```{r}
 set.seed(42) # For reproducibility
@@ -588,22 +545,21 @@ ggp = ggp +
               formula = y ~ poly(x, 2, raw = TRUE)) 
 ggp
 ```
-The regression line with the quadratic term fits the data very well even though it ignores the other terms. The quadratic term prevales as X grows, resulting in the model being an overall good fit even if some points are spread around the regression line and not exactly on it.
+The regression line with the quadratic term fits the data very well even though it ignores the other terms. The quadratic term prevails as X grows, resulting in the model being an overall good fit even if some points are spread around the regression line and not exactly on it.
 
-(b)
+b)
+
+First of all, we print the summary of the model and the correlation between X and Y:
 
 ```{r}
-# Print the summary of the model
 print(summary(fit_quadratic))
 ```
 
 ```{r}
-# Compute and print the correlation between X and Y
-correlation <- cor(X^2, Y)
+correlation <- cor(X, Y)
 print(correlation)
 ```
-The correlation is so low despite X^2 being a very good fit for the model because Pearson's correlation coefficient can't capture non-linear relationships.
-
+The correlation is so low (`r correlation`) despite the large $R^2$ value of the model because Pearson's correlation coefficient can't capture non-linear relationships.
 
 ### Ex 6.52
 
@@ -622,12 +578,63 @@ $$ F = \frac{(SSE_0-SSE_1)/(p_1-p_0)}{SSE_1/[n-(p_1+1)]} \quad = \quad \frac{R_1
 
 **Solution**
 
+a)
+
+F-statistic for testing $H_0 : \beta_1 = ... = \beta_p$ = 0 is given by:
+
+$$ F = \frac{Explained \ Variance \ per \ Predictor}{Unexplained \ Variance \ per \ Residual  \ Degree \  of \ Freedom}$$
+This is expressed as:
+
+$$ F = \frac{(TSS-SSE)/p}{SSE/[n-(p+1)]} $$ 
+We can relate $R^2$ to $TSS$ and $SSE$:
+
+$$ R^2 = \frac{TSS-SSE}{TSS} \quad => \quad TSS - SSE = R^2 \ TSS$$
+The proportion of unexplained variance is: $1-R^2= \frac{SSE}{TSS}$.
+
+And we can express SSE as: $SSE=(1-R^2) \ TSS$.
+
+We can now substitute this results into $F$-statistics formula:
+
+$$ F = \frac{(R^2 \ TSS) \ / p}{[(1-R^2) \ TSS] \ / [n-(p+1)]}$$
+Simplifying the TSS term in the numerator and denominator, we obtain:
+
+$$ F = \frac{R^2 \ / p}{(1-R^2) \  \ / [n-(p+1)]}$$
+Rearranging:
+
+$$ F = \frac{R^2}{p} \ \frac{n - (p+1)}{1 - R^2}$$
+The result we have obtained is equal to:
+
+$$ F = \frac{(TSS-SSE)/p}{SSE/[n-(p+1)]} $$ 
+A larger proportion of explained variance (higher $R^2$) results in a more significant F-value, indicating stronger evidence against $H_0$.
+
+b)
+
+From the previous point:
+
+$$ R^2 = 1 - \frac{SSE}{TSS} $$
+For the reduced (0 index) and the full model (1 index):
+
+$$ R^2_0 = 1 - \frac{SSE_0}{TSS} \quad and \quad R^2_1 = 1 - \frac{SSE_1}{TSS} $$
+The reduction in SSE when moving from the reduced model to the full model can be expressed in terms of $R^2$:
+
+$$ SSE_0 - SSE_1 = (R_1^2 - R_0^2) \ TSS $$
+We can substitute into the numerator of the F-statistics formula:
+
+$$ \frac{SSE_0 - SSE_1}{p_1-p_0} = \frac{(R_1^2 - R_0^2) \ TSS}{p_1-p_0} $$
+Where $p_1$ and $p_0$ are the number of predictors in the full model and reduced models, respectively.
+
+For the full model, the denominator becomes:
+
+$$ \frac{SSE_1}{n-(p_1+1)} = \frac{(1-R_1^2)\ TSS}{n-(p_1+1)} $$
+We can combine numerator and denominator and obtain:
+
+$$ F = \frac{(SSE_0-SSE_1)/(p_1-p_0)}{SSE_1/[n-(p_1+1)]} \quad = \quad \frac{R_1^2-R_0^2/(p_1-p_0)}{(1-R_1^2)/[n-(p_1+1)]} $$
+
 ## FSDS - Chapter 7
 
 ### Ex 7.4
 
-*Analogously to the previous exercise, randomly sample 30 X observations from a uniform in
-the interval (-4,4) and conditional on X = $x$, 30 normal observations with E(Y ) = $3.5x^3$ − $20x^2$ + $0.5x$ + 20 and $\sigma$ = 30. Fit polynomial normal GLMs of lower and higher order than that of the true relationship. Which model would you suggest? Repeat the same task for E(Y ) = $0.5x^3$ − $20x^2$ + $0.5x$ + 20 (same $\sigma$) several times. What do you observe? Which model would you suggest now?*
+*Analogously to the previous exercise, randomly sample 30 X observations from a uniform in the interval (-4,4) and conditional on X = $x$, 30 normal observations with E(Y) = $3.5x^3$ − $20x^2$ + $0.5x$ + 20 and $\sigma$ = 30. Fit polynomial normal GLMs of lower and higher order than that of the true relationship. Which model would you suggest? Repeat the same task for E(Y) = $0.5x^3$ − $20x^2$ + $0.5x$ + 20 (same $\sigma$) several times. What do you observe? Which model would you suggest now?*
 
 **Solution**
 
@@ -681,7 +688,8 @@ ggplot(data, aes(x = X, y = Y)) +
   theme_minimal()  # Use a clean theme
 
 ```
-The cubic model seems to fit the data best
+As we can see, the cubic model (red line) seems to fit the data best.
+
 ```{r}
 n = 30
 sigma = 30
@@ -726,7 +734,7 @@ ggplot(data, aes(x = X, y = Y)) +
   theme_minimal()  # Use a clean theme
 
 ```
-Npow all models but the linear one fit the data almost perfectly
+Now all models but the linear one fit the data almost perfectly.
 
 ### Ex 7.20
 
@@ -738,34 +746,65 @@ Npow all models but the linear one fit the data almost perfectly
 
 **Solution**
 
-(a)
 
 ```{r}
 crabs_url <- "https://stat4ds.rwth-aachen.de/data/Crabs.dat"
 
 crabs = read.table(crabs_url, header = TRUE)
 
+head(crabs)
+
+```
+a)
+
+Using the glm function, we build a logistic regression model and we obtain a summary.
+
+```{r}
 fit = glm(y ~ weight + color, family = binomial(link = "logit"), data = crabs)
 summary(fit)
+```
+Significance test for the color effect:
+
+```{r}
+anova_model <- anova(fit, test = "Chisq")
+cat("Significativity test for color:\n")
+print(anova_model)
+```
+Although the effect is less strong than in weight, the color effect is still significant (p < 0.05).
+This suggests that color contributes to improved model fit and explains some of the variability in response.
+
+Building the confidence interval:
+
+```{r}
 CI_weight = fit$coefficients[2] + c(-1,1)*qnorm(0.975)*(summary(fit)$coefficients[, "Std. Error"][2])
+CI_weight
+
 # check
-confint(fit)
+CI_weight_function <- confint(fit, param="weight")
+CI_weight_function
 # the intervals match!
 ```
-(b) 
+b)
+
+Fitting the model that permits interaction between color as a factor and weight in their effects.
 
 ```{r}
 fit1 = glm(y ~ weight + factor(color) + weight:factor(color), family = binomial(link = "logit"), data = crabs)
 summary(fit1)
-
+```
+```{r}
 c(AIC(fit), AIC(fit1))
-anova(fit1, fit, test = "LRT")
+```
 
+```{r}
+anova(fit1, fit, test = "LRT")
 ```
 The extended model scores a slightly lower deviance, but it doesn't significantly improve with the AIC. Also with LRT, the difference between the 2 models is not significant even at the 10% level. 
 We thus prefer the smaller and simpler model.
 
-(c)
+c)
+
+we tested various models seem the most sensible. In particular, we tested the model with interaction, the main model (fit), the model with weights as the only predictor, color as the only predictor and the null model.
 
 ```{r}
 # Fit the models
@@ -774,17 +813,22 @@ model_main <- glm(y ~ weight + color, family = binomial, data = crabs)
 model_weight <- glm(y ~ weight, family = binomial, data = crabs)
 model_color <- glm(y ~ color, family = binomial, data = crabs)
 model_null <- glm(y ~ 1, family = binomial, data = crabs)
+```
 
-# Compare AIC
+**Comparing the AIC**
+
+```{r}
 aic_values <- AIC(model_interaction, model_main, model_weight, model_color, model_null)
 print(aic_values)
 ```
 The main effects models scores the lowest AIC criteria, and is therefore the best model.
-```{r}
-anova(model_null, model_weight, model_main, model_interaction, test = "Chisq")
 
+**Anova**
+
+```{r}
+anova(model_null, model_color, model_weight, model_main, model_interaction, test = "Chisq")
 ```
-The ANOVA test also confirms that the main effects model is significantly better than the others.
+The best model is the main effects one (4), as it represents a good balance between simplicity and explanatory power. The addition of both predictors significantly reduces residual deviance compared with the simpler models, indicating that both weight and color help to explain variability in the response variable. However, the inclusion of an interaction term between the two predictors does not make a significant improvement, suggesting that their effects are mainly additive. Therefore, the model with only main effects effectively balances complexity and statistical significance, respecting the principle of parsimony.
 
 ### Ex 7.26
 
@@ -792,28 +836,53 @@ The ANOVA test also confirms that the main effects model is significantly better
 
 **Solution**
 
+**Poisson model**
+
 ```{r}
-counts = c(33, 29, 29, 12, 17, 21, 31, 28, 19, 14, 11, 26, 23)
+shark_attacks <- c(33, 29, 29, 12, 17, 21, 31, 28, 19, 14, 11, 26, 23)
 
-null_poisson = glm(counts ~ 1, family = poisson(link = "log"))
-summary(null_poisson)
+poisson_model <- glm(shark_attacks ~ 1, family = poisson(link = "log"))
+summary(poisson_model)
+```
 
-# can these values be generated by a null poisson
-pchisq(null_poisson$deviance, null_poisson$df.residual, lower.tail = F)
+```{r}
+#dispersion
+dispersion <- sum(residuals(poisson_model, type = "deviance")^2) / df.residual(poisson_model)
+dispersion
+
+residual_deviance <- poisson_model$deviance
+residual_df <- poisson_model$df.residual
+p_value <- pchisq(residual_deviance, residual_df, lower.tail = FALSE)
+
+cat("Residual Deviance:", residual_deviance, "\n")
+cat("Residual DF:", residual_df, "\n")
+cat("P-value :", p_value, "\n")
 
 ```
-This value is very low, indicating that the data at hand cannot come from a Null Poisson model.
+The residual deviance is significantly different from the expected deviance. Poisson's model may not be suitable. Moreover, the value obtained from pchisq is very low, indicating that the data at hand cannot come from a Null Poisson model.
+
+**Negative Binomial**
+
 ```{r}
 library(MASS)
 
-# Fit a negative binomial GLM
-model_nb <- glm.nb(counts ~ 1)
+model_nb <- glm.nb(shark_attacks ~ 1)
 
-# View the summary
 summary(model_nb)
 
-pchisq(model_nb$deviance, null_poisson$df.residual, lower.tail = F)
+```
+```{r}
+pchisq(model_nb$deviance, poisson_model$df.residual, lower.tail = F)
+```
+In the case of the negative binomial, from the observation of the p-value, we cannot reject the null hypothesis that the counts at hand originate from such a distribution. 
+
+```{r}
+#aic comparison
+aic_comparison <- AIC(poisson_model, model_nb)
+cat("Comparison AIC:\n")
+print(aic_comparison)
 ```
 
+AIC of the negative binomial is lower than the Poisson, thus indicating a better fit.
 
-In the case of the negative binomial, we cannot reject the null hypothesis that the counts at hand originate from such a distribution. 
+
