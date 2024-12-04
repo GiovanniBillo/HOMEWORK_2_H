@@ -10,7 +10,7 @@ date: "2024-12-04"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 ## FSDS - Chapter 4
@@ -89,8 +89,7 @@ waldInterval = function(x, n, conf.level = 0.95){
 }
 waldInterval(life_after_death, n)
 ```
-The interval is extremely small and includes 0: most probably the portion of students that believe in life after death is not significantly different from 0.
-
+The interval is extremely small and includes 0: most probably the portion of students that believe in life after death is not significantly different from 0. However, it must be noted that the interval also contains values smaller than 0, which obviously cannot be taken by the parameter of a proportion. For this reason, other types of tests may be more suitable in this situation.
 
 
 ### Ex 4.38
@@ -191,7 +190,6 @@ comparison
 b)
 
 ```{r}
-
 log_likelihood_normal <- function(mu, sigma2, data) {
   #browser()
   n <- length(data)
@@ -221,7 +219,10 @@ Log_ML_mu = optim(
   method = "L-BFGS-B",
   lower = 1e-6  # Ensure sigma^2 > 0
 )
+```
 
+c)
+```{r}
 comparison2 <- data.frame(
   Quantity = c("Mean", "Variance"),
   MLE_Function = c(Log_ML_mu$par, Log_ML_sigma$par),
@@ -245,7 +246,10 @@ sigma_normal <- sd(data)      # Standard deviation
 log_data <- log(data)         # Log-transform the data
 mu_log <- mean(log_data)      # Mean of log-transformed data
 sigma_log <- sd(log_data)     # Std dev of log-transformed data
+```
 
+d)
+```{r}
 # Histogram of the data
 ggplot(data = data.frame(price = data), aes(x = price)) +
   geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -277,6 +281,8 @@ ggplot(data = data.frame(price = data), aes(x = price)) +
   theme_minimal()
 
 ```
+It appears that the log-normal distribution fits the data better.
+
 
 ### Ex 4.54
 
@@ -688,7 +694,7 @@ ggplot(data, aes(x = X, y = Y)) +
   theme_minimal()  # Use a clean theme
 
 ```
-As we can see, the cubic model (red line) seems to fit the data best.
+As we can see, the quartic model (purple line) seems to fit the data best, whereas the quadratic and linear models appear incapable of capturing the complexity of the relationship. Choosing a model such as the quartic one, or of higher degree, would just introduce unnecessary complexity in explaining the relationship, and significantly imbalance the bias-variance tradeoff.
 
 ```{r}
 n = 30
@@ -734,7 +740,7 @@ ggplot(data, aes(x = X, y = Y)) +
   theme_minimal()  # Use a clean theme
 
 ```
-Now all models but the linear one fit the data almost perfectly.
+Now all models but the linear one fit the data almost perfectly: the low coefficient on the cubic term has made it almost irrelevant in the interval, compared to the quadratic coefficient. 
 
 ### Ex 7.20
 
@@ -804,7 +810,7 @@ We thus prefer the smaller and simpler model.
 
 c)
 
-we tested various models seem the most sensible. In particular, we tested the model with interaction, the main model (fit), the model with weights as the only predictor, color as the only predictor and the null model.
+We tested various models that seem the most sensible. In particular, we tested the model with interaction, the main model (fit), the model with weights as the only predictor, color as the only predictor and the null model.
 
 ```{r}
 # Fit the models
